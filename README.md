@@ -19,13 +19,9 @@ Here is a good blog post from Ole Begemann on the subject http://oleb.net/blog/2
 
 ###TODO
 - Ole Bergmann also links to this advice from Brent Simmons which looks like the right way to handle this sort of code to me. I haven't done it this way to date as I was struggling to figure out how to get NSProgress to work and what is included is the first success I managed. Should revisit and rewrite it following Brent's advice. http://inessential.com/2014/03/08/api_design_the_main_thread_and_queues
-- How do you resume a paused NSProgress instance?
+- How do you resume a paused NSProgress instance? https://stackoverflow.com/questions/21159197/nsprogress-resume-after-calling-pause
 - The buttons should be enabled/disabled as appropriate.
 - Cancelling the tasks should set the progressIndicator back to 0.
 
-Idea: I should do a sample project using NSProgress written in Swift. This can go up on Github. Key points to demonstrate are
-- The becomeCurrent calls need to occur on the same thread. 
-- The totals and workUnitCounts of the different NSProgress items is difficult to grasp
-- Show how to have multiple long running tasks combined into one progress indicator without them knowing about each other
-- Implement cancel and pause
+
 
