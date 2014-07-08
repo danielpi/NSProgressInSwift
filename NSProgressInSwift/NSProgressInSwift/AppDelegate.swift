@@ -29,7 +29,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Insert code here to tear down your application
     }
     
-    override func observeValueForKeyPath(keyPath: String!, ofObject object: AnyObject!, change: NSDictionary!, context: CMutableVoidPointer) {
+    override func observeValueForKeyPath(keyPath: String!, ofObject object: AnyObject!, change: [NSObject : AnyObject]!, context: UnsafePointer<()>) {
         //println("Observed Something")
         NSOperationQueue.mainQueue().addOperationWithBlock( {
             let progress = object as NSProgress
@@ -86,7 +86,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         var child1Progress: NSProgress = NSProgress(totalUnitCount: totalUnitCount)
         
         outerLoop: for majorStep in 1...totalUnitCount {
-            for minorStep in 1 .. 100 {
+            for minorStep in 1 ..< 100 {
                 while child1Progress.paused {
                     if child1Progress.cancelled {
                         child1Progress.completedUnitCount = totalUnitCount
