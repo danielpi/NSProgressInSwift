@@ -23,6 +23,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification?) {
         // Insert code here to initialize your application
+        pauseButton.enabled = false
+        cancelButton.hidden = true
     }
 
     func applicationWillTerminate(aNotification: NSNotification?) {
@@ -31,20 +33,36 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     override func observeValueForKeyPath(keyPath: String!, ofObject object: AnyObject!, change: [NSObject : AnyObject]!, context: UnsafePointer<()>) {
         //println("Observed Something")
-        NSOperationQueue.mainQueue().addOperationWithBlock( {
-            let progress = object as NSProgress
-            self.progressIndicator.doubleValue = progress.fractionCompleted
-            //println("\(progress.fractionCompleted)")
-            } )
+        
+        if let theKeyPath = keyPath {
+            switch theKeyPath {
+            case "fractionCompleted":
+                NSOperationQueue.mainQueue().addOperationWithBlock {
+                    let progress = object as NSProgress
+                    self.progressIndicator.doubleValue = progress.fractionCompleted
+                }
+            case "localizedDescription":
+                NSOperationQueue.mainQueue().addOperationWithBlock {
+                    let progress = object as NSProgress
+                    self.progressDescriptionLabel.stringValue = progress.localizedDescription
+                }
+            default:
+                println("Unknown Observed value")
+            }
+        }
+        
+        
     }
 
     @IBAction func startTask(sender : AnyObject) {
         parentProgress = NSProgress(totalUnitCount: 10)
         let options : NSKeyValueObservingOptions = .New | .Old | .Initial | .Prior
         parentProgress!.addObserver(self, forKeyPath: "fractionCompleted", options: options, context: nil)
+        parentProgress!.addObserver(self, forKeyPath: "localizedDescription", options: options, context: nil)
         
         let queue: dispatch_queue_t = dispatch_queue_create("My Queue", DISPATCH_QUEUE_SERIAL)
-        
+        cancelButton.hidden = false
+        startButton.enabled = false
         dispatch_async(queue) {
             self.parentProgress!.becomeCurrentWithPendingUnitCount(4)
             self.task1()
@@ -58,6 +76,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.parentProgress!.becomeCurrentWithPendingUnitCount(5)
             self.task2()
             self.parentProgress!.resignCurrent()
+            
+            self.parentProgress!.removeObserver(self, forKeyPath: "fractionCompleted")
+            self.parentProgress!.removeObserver(self, forKeyPath: "localizedDescription")
         }
     }
 
@@ -118,7 +139,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 child2Progress.completedUnitCount++ // Increment the progress instance
             }
         }
-        
+        cancelButton.hidden = true
+        startButton.enabled = true
     }
 }
 
