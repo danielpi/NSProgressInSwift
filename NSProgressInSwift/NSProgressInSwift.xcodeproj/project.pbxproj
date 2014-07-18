@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E6C192AE1979297F0075AA6E /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = E6C192AD1979297F0075AA6E /* README.md */; };
 		E6ECB008196374A400C27E0C /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6ECB007196374A400C27E0C /* main.swift */; };
 		E6ECB00A196374A400C27E0C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6ECB009196374A400C27E0C /* AppDelegate.swift */; };
 		E6ECB00C196374A400C27E0C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E6ECB00B196374A400C27E0C /* Images.xcassets */; };
@@ -25,6 +26,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E6C192AD1979297F0075AA6E /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		E6ECB002196374A400C27E0C /* NSProgressInSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NSProgressInSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6ECB006196374A400C27E0C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E6ECB007196374A400C27E0C /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -57,6 +59,7 @@
 		E6ECAFF9196374A300C27E0C = {
 			isa = PBXGroup;
 			children = (
+				E6C192AD1979297F0075AA6E /* README.md */,
 				E6ECB004196374A400C27E0C /* NSProgressInSwift */,
 				E6ECB017196374A400C27E0C /* NSProgressInSwiftTests */,
 				E6ECB003196374A400C27E0C /* Products */,
@@ -208,6 +211,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6C192AE1979297F0075AA6E /* README.md in Sources */,
 				E6ECB00A196374A400C27E0C /* AppDelegate.swift in Sources */,
 				E6ECB008196374A400C27E0C /* main.swift in Sources */,
 			);
@@ -399,6 +403,7 @@
 				E6ECB020196374A400C27E0C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E6ECB021196374A400C27E0C /* Build configuration list for PBXNativeTarget "NSProgressInSwiftTests" */ = {
 			isa = XCConfigurationList;
@@ -407,6 +412,7 @@
 				E6ECB023196374A400C27E0C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
