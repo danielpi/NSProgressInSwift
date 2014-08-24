@@ -10,13 +10,13 @@ import Cocoa
 
 class AppDelegate: NSObject, NSApplicationDelegate {
                             
-    @IBOutlet var window: NSWindow
+    @IBOutlet var window: NSWindow!
     
-    @IBOutlet var progressIndicator : NSProgressIndicator
-    @IBOutlet var progressDescriptionLabel : NSTextField
-    @IBOutlet var startButton : NSButton
-    @IBOutlet var pauseButton : NSButton
-    @IBOutlet var cancelButton : NSButton
+    @IBOutlet var progressIndicator : NSProgressIndicator!
+    @IBOutlet var progressDescriptionLabel : NSTextField!
+    @IBOutlet var startButton : NSButton!
+    @IBOutlet var pauseButton : NSButton!
+    @IBOutlet var cancelButton : NSButton!
     
     var parentProgress: NSProgress?
     var queue: dispatch_queue_t = dispatch_queue_create("My Queue", DISPATCH_QUEUE_SERIAL)
@@ -32,8 +32,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Insert code here to tear down your application
     }
     
-    override func observeValueForKeyPath(keyPath: String!, ofObject object: AnyObject!, change: [NSObject : AnyObject]!, context: UnsafePointer<()>) {
-        //println("Observed Something")
+    //override func observeValueForKeyPath(keyPath: String!, ofObject object: AnyObject!, change: [NSObject : AnyObject]!, context: UnsafePointer<()>) {
+    override func observeValueForKeyPath(keyPath: String!, ofObject object: AnyObject!, change: [NSObject : AnyObject]!, context: UnsafeMutablePointer<Void>) {
+    //println("Observed Something")
         
         if let theKeyPath = keyPath {
             switch theKeyPath {

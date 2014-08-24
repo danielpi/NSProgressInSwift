@@ -18,7 +18,6 @@ Here is a good blog post from Ole Begemann on the subject http://oleb.net/blog/2
 
 
 ###TODO
-- Ole Bergmann also links to this advice from Brent Simmons which looks like the right way to handle this sort of code to me. I haven't done it this way to date as I was struggling to figure out how to get NSProgress to work and what is included is the first success I managed. Should revisit and rewrite it following Brent's advice. http://inessential.com/2014/03/08/api_design_the_main_thread_and_queues
 - How do you resume a paused NSProgress instance? https://stackoverflow.com/questions/21159197/nsprogress-resume-after-calling-pause
 - Cancelling the tasks should set the progressIndicator back to 0.
 
