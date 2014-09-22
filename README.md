@@ -20,6 +20,7 @@ Here is a good blog post from Ole Begemann on the subject http://oleb.net/blog/2
 ###TODO
 - How do you resume a paused NSProgress instance? https://stackoverflow.com/questions/21159197/nsprogress-resume-after-calling-pause
 - Cancelling the tasks should set the progressIndicator back to 0.
+- There is a bit of a trap when using NSProgress. Your parent NSProgress object will subscribe to any child NSProgress objects that are created in between the becomeCurrentWithPendingUnitCount() and resignCurrent() function calls. This means that if your code invokes any Cocoa code that creates NSProgress objects (which is not very well advertised in the documentation) then they will be included in your parent NSProgress objects progress. This can swamp your parent progress indication. I have had this problem with code that created a bunch of NSDictionaries and NSArrays (never did track down which object was NSProgress compatible). To get around this I had to move almost all code that wasn't related to my NSProgress instance out of the function call that started off my long running task.
 
 
 
