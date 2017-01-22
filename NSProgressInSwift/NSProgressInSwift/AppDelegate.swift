@@ -8,6 +8,7 @@
 
 import Cocoa
 
+@NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
                             
     @IBOutlet var window: NSWindow!
@@ -18,72 +19,76 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet var pauseButton : NSButton!
     @IBOutlet var cancelButton : NSButton!
     
-    var parentProgress: NSProgress?
-    var queue: dispatch_queue_t = dispatch_queue_create("My Queue", DISPATCH_QUEUE_SERIAL)
+    var parentProgress: Progress?
+    var queue: DispatchQueue = DispatchQueue(label: "My Queue", attributes: [])
 
-    func applicationDidFinishLaunching(aNotification: NSNotification?) {
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
-        pauseButton.enabled = false
-        cancelButton.hidden = true
+        pauseButton.isEnabled = false
+        cancelButton.isHidden = true
         //self.queue = dispatch_queue_create("My Queue", DISPATCH_QUEUE_SERIAL)
     }
 
-    func applicationWillTerminate(aNotification: NSNotification?) {
+    func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }
     
     //override func observeValueForKeyPath(keyPath: String!, ofObject object: AnyObject!, change: [NSObject : AnyObject]!, context: UnsafePointer<()>) {
-    override func observeValueForKeyPath(keyPath: String!, ofObject object: AnyObject!, change: [NSObject : AnyObject]!, context: UnsafeMutablePointer<Void>) {
-    //println("Observed Something")
+    override func observeValue(forKeyPath keyPath: String?,
+                                        of object: Any?,
+                                           change: [NSKeyValueChangeKey : Any]?,
+                                          context: UnsafeMutableRawPointer?) {
+        print("Observed Something")
         
         if let theKeyPath = keyPath {
             switch theKeyPath {
             case "fractionCompleted":
-                NSOperationQueue.mainQueue().addOperationWithBlock {
-                    let progress = object as NSProgress
+                OperationQueue.main.addOperation {
+                    let progress = object as! Progress
                     self.progressIndicator.doubleValue = progress.fractionCompleted
                 }
             case "localizedDescription":
-                NSOperationQueue.mainQueue().addOperationWithBlock {
-                    let progress = object as NSProgress
+                OperationQueue.main.addOperation {
+                    let progress = object as! Progress
                     self.progressDescriptionLabel.stringValue = progress.localizedDescription
                 }
             default:
-                println("Unknown Observed value")
+                print("Unknown Observed value")
             }
         }
         
         
     }
 
-    @IBAction func startTask(sender : AnyObject) {
-        parentProgress = NSProgress(totalUnitCount: 10)
-        let options : NSKeyValueObservingOptions = .New | .Old | .Initial | .Prior
+    @IBAction func startTask(_ sender : AnyObject) {
+        parentProgress = Progress(totalUnitCount: 10)
+        //let options : NSKeyValueObservingOptions = .new | .old | .initial | .prior
+        let options : NSKeyValueObservingOptions = [.new, .old, .initial, .prior]
         parentProgress!.addObserver(self, forKeyPath: "fractionCompleted", options: options, context: nil)
         parentProgress!.addObserver(self, forKeyPath: "localizedDescription", options: options, context: nil)
         
         
-        cancelButton.hidden = false
-        startButton.enabled = false
+        cancelButton.isHidden = false
+        startButton.isEnabled = false
         
-        self.parentProgress!.becomeCurrentWithPendingUnitCount(4)
-        self.task1() { println("Task 1 complete") }
+        self.parentProgress!.becomeCurrent(withPendingUnitCount: 4)
+        self.task1() { print("Task 1 complete") }
         self.parentProgress!.resignCurrent()
         
-        self.parentProgress!.becomeCurrentWithPendingUnitCount(6)
+        self.parentProgress!.becomeCurrent(withPendingUnitCount: 6)
         self.task2() {
-            self.cancelButton.hidden = true
-            self.startButton.enabled = true
+            self.cancelButton.isHidden = true
+            self.startButton.isEnabled = true
             self.parentProgress!.removeObserver(self, forKeyPath: "fractionCompleted")
             self.parentProgress!.removeObserver(self, forKeyPath: "localizedDescription")
-            println("Task 2 complete")
+            print("Task 2 complete")
         }
         self.parentProgress!.resignCurrent()
     }
 
-    @IBAction func pauseTask(sender : AnyObject) {
+    @IBAction func pauseTask(_ sender : AnyObject) {
         if let progress = self.parentProgress {
-            if progress.paused {
+            if progress.isPaused {
                 //progress.resume???
                 // How do you resume a paused NSProgress?
                 //self.pauseButton.title = "Pause"
@@ -94,57 +99,57 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
-    @IBAction func cancelTask(sender : AnyObject) {
+    @IBAction func cancelTask(_ sender : AnyObject) {
         if let progress = self.parentProgress {
             progress.cancel()
             self.pauseButton.title = "Pause"
         }
     }
     
-    func task1(completionHandler: () -> ()) {
+    func task1(_ completionHandler: @escaping () -> ()) {
         let totalUnitCount: Int64 = 8
-        var child1Progress: NSProgress = NSProgress(totalUnitCount: totalUnitCount)
+        let child1Progress: Progress = Progress(totalUnitCount: totalUnitCount)
         
-        dispatch_async(queue) {
-            outerLoop: for majorStep in 1...totalUnitCount {
-                for minorStep in 1 ..< 100 {
-                    while child1Progress.paused {
-                        if child1Progress.cancelled {
+        queue.async {
+            outerLoop: for _ in 1...totalUnitCount {
+                for _ in 1 ..< 100 {
+                    while child1Progress.isPaused {
+                        if child1Progress.isCancelled {
                             child1Progress.completedUnitCount = totalUnitCount
                             break outerLoop
                         } // Don't for get to check for a cancellation
                         usleep(500000) // Check every half a second
                     }
-                    if child1Progress.cancelled {
+                    if child1Progress.isCancelled {
                         child1Progress.completedUnitCount = totalUnitCount
                         break outerLoop
                     }
                     // Perform your task here. I've just used the sleep function to waste some time
                     usleep(3200)
                 }
-                child1Progress.completedUnitCount++ // Increment the progress instance
+                child1Progress.completedUnitCount += 1 // Increment the progress instance
             }
-            dispatch_async(dispatch_get_main_queue(), completionHandler)
+            DispatchQueue.main.async(execute: completionHandler)
         }
         
     }
     
-    func task2(completionHandler: () -> ()) {
+    func task2(_ completionHandler: @escaping () -> ()) {
         let totalUnitCount: Int64 = 100
-        var child2Progress: NSProgress = NSProgress(totalUnitCount: totalUnitCount)
+        let child2Progress: Progress = Progress(totalUnitCount: totalUnitCount)
         
-        dispatch_async(queue) {
-            for majorStep in 1...totalUnitCount {
-                if child2Progress.cancelled {
+        queue.async {
+            for _ in 1...totalUnitCount {
+                if child2Progress.isCancelled {
                     child2Progress.completedUnitCount = totalUnitCount
                     break
                 } else {
                     // Perform your task here. I've just used the sleep function to waste some time
                     usleep(12800)
-                    child2Progress.completedUnitCount++ // Increment the progress instance
+                    child2Progress.completedUnitCount += 1 // Increment the progress instance
                 }
             }
-            dispatch_async(dispatch_get_main_queue(), completionHandler)
+            DispatchQueue.main.async(execute: completionHandler)
         }
     }
 }
